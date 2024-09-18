@@ -12,6 +12,7 @@ from airbyte_cdk.utils import AirbyteTracedException
 from source_linkedin_ads.source import (
     Accounts,
     AccountUsers,
+    DmpSegments,
     AdCampaignAnalytics,
     AdCreativeAnalytics,
     CampaignGroups,
@@ -81,6 +82,7 @@ class TestAllStreams:
         [
             Accounts,
             AccountUsers,
+            DmpSegments,
             CampaignGroups,
             Campaigns,
             Creatives,
@@ -90,6 +92,7 @@ class TestAllStreams:
         ids=[
             "Accounts",
             "AccountUsers",
+            "DmpSegments",
             "CampaignGroups",
             "Campaigns",
             "Creatives",
@@ -127,6 +130,7 @@ class TestAllStreams:
         [
             (Accounts, None, "adAccounts"),
             (AccountUsers, None, "adAccountUsers"),
+            (DmpSegments, None, "dmpSegments"),
             (CampaignGroups, {"account_id": 123}, "adAccounts/123/adCampaignGroups"),
             (Campaigns, {"account_id": 123}, "adAccounts/123/adCampaigns"),
             (Creatives, {"account_id": 123}, "adAccounts/123/creatives"),
@@ -136,6 +140,7 @@ class TestAllStreams:
         ids=[
             "Accounts",
             "AccountUsers",
+            "DmpSegments",
             "CampaignGroups",
             "Campaigns",
             "Creatives",
@@ -222,6 +227,11 @@ class TestLinkedInAdsStreamSlicing:
                 "count=500&q=accounts&accounts=urn:li:sponsoredAccount:123",
             ),
             (
+                DmpSegments,
+                {"account_id": 123},
+                "count=500&q=account&account=urn:li:sponsoredAccount:123",
+            ),
+            (
                 CampaignGroups,
                 {"account_id": 123},
                 "pageSize=500&q=search&search=(status:(values:List(ACTIVE,ARCHIVED,CANCELED,DRAFT,PAUSED,PENDING_DELETION,REMOVED)))",
@@ -237,7 +247,7 @@ class TestLinkedInAdsStreamSlicing:
                 "pageSize=100&q=criteria",
             ),
         ],
-        ids=["AccountUsers", "CampaignGroups", "Campaigns", "Creatives"],
+        ids=["AccountUsers","DmpSegments", "CampaignGroups", "Campaigns", "Creatives"],
     )
     def test_request_params(self, stream_cls, slice, expected):
         stream = stream_cls(TEST_CONFIG)
@@ -248,12 +258,14 @@ class TestLinkedInAdsStreamSlicing:
         "stream_cls, state, records_slice, expected",
         [
             (AccountUsers, {"lastModified": 1}, [{"lastModified": 2}], [{"lastModified": 2}]),
+            (DmpSegments, {"lastModified": 1}, [{"lastModified": 2}], [{"lastModified": 2}]),
             (CampaignGroups, {"lastModified": 3}, [{"lastModified": 3}], [{"lastModified": 3}]),
             (Campaigns, {}, [], []),
             (Creatives, {}, [], []),
         ],
         ids=[
             "AccountUsers",
+            "DmpSegments",
             "CampaignGroups",
             "Campaigns",
             "Creatives",

@@ -10,6 +10,13 @@
     "type": "STREAM",
     "stream": {
       "stream_state": { "lastModified": "2050-01-01" },
+      "stream_descriptor": { "name": "dmp_segments" }
+    }
+  },
+  {
+    "type": "STREAM",
+    "stream": {
+      "stream_state": { "lastModified": "2050-01-01" },
       "stream_descriptor": { "name": "campaign_groups" }
     }
   },

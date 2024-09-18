@@ -276,6 +276,21 @@ class AccountUsers(OffsetPaginationMixin, LinkedInAdsStreamSlicing):
         params["accounts"] = f"urn:li:sponsoredAccount:{stream_slice.get('account_id')}"  # accounts=
         return urlencode(params, safe="():,%")
 
+class DmpSegments(OffsetPaginationMixin, LinkedInAdsStreamSlicing):
+    """
+    Get DmpSegments data using `account_id` slicing. More info about LinkedIn Ads / DmpSegments:
+    https://learn.microsoft.com/en-us/linkedin/marketing/matched-audiences/create-and-manage-segments?view=li-lms-2024-05&tabs=http#find-dmp-segments-by-account
+    """
+
+    endpoint = "dmpSegments"
+    search_param = "account"
+
+    def request_params(self, stream_state: Mapping[str, Any], stream_slice: Mapping[str, Any] = None, **kwargs) -> MutableMapping[str, Any]:
+        params = super().request_params(stream_state=stream_state, **kwargs)
+        params["q"] = self.search_param
+        params["account"] = f"urn:li:sponsoredAccount:{stream_slice.get('account_id')}"  # accounts=
+        return urlencode(params, safe="():,%")
+
 
 class CampaignGroups(LinkedInAdsStreamSlicing):
     """
