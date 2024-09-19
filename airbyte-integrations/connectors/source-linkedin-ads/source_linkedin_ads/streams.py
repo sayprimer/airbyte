@@ -288,17 +288,8 @@ class DmpSegments(OffsetPaginationMixin, LinkedInAdsStreamSlicing):
     def request_params(self, stream_state: Mapping[str, Any], stream_slice: Mapping[str, Any] = None, **kwargs) -> MutableMapping[str, Any]:
         params = super().request_params(stream_state=stream_state, **kwargs)
         params["q"] = self.search_param
-        params["account"] = f"urn:li:sponsoredAccount:{stream_slice.get('account_id')}"  # accounts=
+        params["account"] = f"urn%3Ali%3AsponsoredAccount%3A{stream_slice.get('account_id')}"
         return urlencode(params, safe="():,%")
-
-    def get_updated_state(self, current_stream_state: MutableMapping[str, Any], latest_record: Mapping[str, Any]) -> Mapping[str, Any]:
-        current_stream_state = (
-            {self.cursor_field: pendulum.parse(self.config.get("start_date")).format("x")}
-            if not current_stream_state
-            else current_stream_state
-        )
-        return {self.cursor_field: max(latest_record.get(self.cursor_field), int(current_stream_state.get(self.cursor_field)))}
-
 
 class CampaignGroups(LinkedInAdsStreamSlicing):
     """

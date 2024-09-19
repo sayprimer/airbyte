@@ -57,6 +57,58 @@ def transform_change_audit_stamps(
     return record
 
 
+def transform_destination_last_modified(
+        record: Dict, dict_key: str = "destinations", props: List = ["created", "lastModified"]
+) -> Mapping[str, Any]:
+    """
+    :: EXAMPLE `destinations` input structure:
+        {
+            "destinations": [
+                {
+                    "destination": "LINKEDIN",
+                    "lastModified": 1692674786000,
+                    "audienceSize": 0,
+                    "created": 1629581275000,
+                    "destinationSegmentId": "urn:li:adSegment:14354304",
+                    "status": "EXPIRED"
+                }
+            ],
+        }
+
+    :: EXAMPLE output:
+        {
+            "destinations": [
+                {
+                    "destination": "LINKEDIN",
+                    "lastModified": 1692674786000,
+                    "audienceSize": 0,
+                    "created": 1629581275000,
+                    "destinationSegmentId": "urn:li:adSegment:14354304",
+                    "status": "EXPIRED"
+                }
+            ],
+            "created": "2021-08-21 21:27:55",
+            "lastModified": "2023-08-21 11:33:06"
+        }
+    """
+
+    target_list = record.get(dict_key, [])
+
+    # Ensure there is at least one item in the destinations list
+    if target_list:
+        # Extract the first destination dictionary
+        first_destination = target_list[0]
+
+        # Loop through the properties to extract and transform
+        for prop in props:
+            # Try to get the existing value from the record or the destination
+            timestamp = record.get(prop) or first_destination.get(prop)
+            if timestamp:
+                # Convert the timestamp from milliseconds to a human-readable format
+                record[prop] = pdm.from_timestamp(int(timestamp) / 1000).to_datetime_string()
+
+    return record
+
 def date_str_from_date_range(record: Dict, prefix: str) -> str:
     """
     Makes the ISO8601 format date string from the input <prefix>.<part of the date>
@@ -317,6 +369,9 @@ def transform_data(records: List) -> Iterable[Mapping]:
     to be properly normalised in the destination.
     """
     for record in records:
+        if "destinations" in record:
+            record = transform_destination_last_modified(record)
+
         if "changeAuditStamps" in record:
             record = transform_change_audit_stamps(record)
 

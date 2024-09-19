@@ -29,8 +29,7 @@
         "properties": {
           "created": {
             "description": "",
-            "type": ["null", "string"],
-            "format": "date-time"
+            "type": ["null", "integer"]
           },
           "destinationSegmentId": {
             "description" : "",
@@ -38,8 +37,11 @@
           },
           "lastModified": {
             "description": "",
-            "type": ["null", "string"],
-            "format": "date-time"
+            "type": ["null", "integer"]
+          },
+          "audienceSize": {
+            "description": "",
+            "type": ["null", "number"]
           },
           "status": {
             "description": "",
@@ -50,8 +52,9 @@
       }
     },
     "lastModified": {
-      "description": "Timestamp of the last modification made.",
-      "type": ["null", "integer"]
+      "description": "",
+      "type": ["null", "string"],
+      "format": "date-time"
     },
     "name": {
       "description": "The name of this DMP segment.",
