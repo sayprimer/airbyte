@@ -40,12 +40,16 @@
             "type": ["null", "integer"]
           },
           "audienceSize": {
-            "description": "",
+            "description": "The approximate number of output entities that will be sent to this destination.",
             "type": ["null", "number"]
           },
           "status": {
             "description": "",
             "type": ["null", "string"]
+          },
+          "matchedCount": {
+            "description": "The approximate number of input entities that were successfully mapped to this destination segment.",
+            "type": ["null", "number"]
           }
         }
 
@@ -60,6 +64,10 @@
       "description": "The name of this DMP segment.",
       "type": ["null", "string"]
     },
+    "description": {
+      "description": "The description of this DMP segment.",
+      "type": ["null", "string"]
+    },
     "sourcePlatform": {
       "description": "The source platform from where users profiles are being imported.",
       "type": ["null", "string"]
@@ -67,6 +75,10 @@
     "type": {
       "description": "The content type of the profiles being imported into this DMP segment. Possible values are USER, COMPANY, or LIST_UPLOAD.",
       "type": ["null", "string"]
+    },
+    "inputSize": {
+      "description": "",
+      "type": ["null", "number"]
     }
   }
 }
