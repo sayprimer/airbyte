@@ -50,9 +50,8 @@
       }
     },
     "lastModified": {
-      "description": "The date and time when the user account was last modified",
-      "type": ["null", "string"],
-      "format": "date-time"
+      "description": "Timestamp of the last modification made.",
+      "type": ["null", "integer"]
     },
     "name": {
       "description": "The name of this DMP segment.",

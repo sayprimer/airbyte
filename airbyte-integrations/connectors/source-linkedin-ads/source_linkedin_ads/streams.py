@@ -291,6 +291,14 @@ class DmpSegments(OffsetPaginationMixin, LinkedInAdsStreamSlicing):
         params["account"] = f"urn:li:sponsoredAccount:{stream_slice.get('account_id')}"  # accounts=
         return urlencode(params, safe="():,%")
 
+    def get_updated_state(self, current_stream_state: MutableMapping[str, Any], latest_record: Mapping[str, Any]) -> Mapping[str, Any]:
+        current_stream_state = (
+            {self.cursor_field: pendulum.parse(self.config.get("start_date")).format("x")}
+            if not current_stream_state
+            else current_stream_state
+        )
+        return {self.cursor_field: max(latest_record.get(self.cursor_field), int(current_stream_state.get(self.cursor_field)))}
+
 
 class CampaignGroups(LinkedInAdsStreamSlicing):
     """
