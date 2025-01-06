@@ -23,6 +23,24 @@
     },
     {
       "stream": {
+        "name": "contact_properties",
+        "json_schema": {},
+        "supported_sync_modes": ["full_refresh"]
+      },
+      "sync_mode": "full_refresh",
+      "destination_sync_mode": "overwrite"
+    },
+    {
+      "stream": {
+        "name": "company_properties",
+        "json_schema": {},
+        "supported_sync_modes": ["full_refresh"]
+      },
+      "sync_mode": "full_refresh",
+      "destination_sync_mode": "overwrite"
+    },
+    {
+      "stream": {
         "name": "contact_lists",
         "json_schema": {},
         "supported_sync_modes": ["full_refresh", "incremental"],
@@ -93,6 +111,15 @@
     {
       "stream": {
         "name": "email_subscriptions",
+        "json_schema": {},
+        "supported_sync_modes": ["full_refresh"]
+      },
+      "sync_mode": "full_refresh",
+      "destination_sync_mode": "overwrite"
+    },
+    {
+      "stream": {
+        "name": "contact_properties",
         "json_schema": {},
         "supported_sync_modes": ["full_refresh"]
       },

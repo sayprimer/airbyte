@@ -5576,6 +5576,298 @@
       "is_resumable": false
     },
     {
+      "name": "company_properties",
+      "json_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": ["null", "object"],
+        "additionalProperties": true,
+        "properties": {
+          "createdUserId": {
+            "description": "The internal user ID of the user who created the property in HubSpot. This field may not exist if the property was created outside of HubSpot.",
+            "type": ["null", "string"]
+          },
+          "hidden": {
+            "description": "Whether or not the property will be hidden from the HubSpot UI. It's recommended this be set to false for custom properties.",
+            "type": ["null", "boolean"]
+          },
+          "modificationMetadata": {
+            "type": ["null", "object"],
+            "properties": {
+              "readOnlyOptions": {
+                "description": "Whether or not the property options are read-only.",
+                "type": ["null", "boolean"]
+              },
+              "readOnlyValue": {
+                "description": "Whether or not the property value is read-only.",
+                "type": ["null", "boolean"]
+              },
+              "readOnlyDefinition": {
+                "description": "Whether or not the property definition is read-only.",
+                "type": ["null", "boolean"]
+              },
+              "archivable": {
+                "description": "Whether or not the property can be archived.",
+                "type": ["null", "boolean"]
+              }
+            }
+          },
+          "displayOrder": {
+            "description": "Properties are shown in order, starting with the lowest positive integer value.",
+            "type": ["null", "integer"]
+          },
+          "description": {
+            "description": "A description of the property that will be shown as help text in HubSpot.",
+            "type": ["null", "string"]
+          },
+          "showCurrencySymbol": {
+            "description": "Whether or not the property will display the currency symbol set in the account settings.",
+            "type": ["null", "boolean"]
+          },
+          "label": {
+            "description": "A human-readable property label that will be shown in HubSpot.",
+            "type": ["null", "string"]
+          },
+          "type": {
+            "description": "The property data type.",
+            "type": ["null", "string"]
+          },
+          "hubspotDefined": {
+            "description": "This will be true for default object properties built into HubSpot.",
+            "type": ["null", "boolean"]
+          },
+          "formField": {
+            "description": "Whether or not the property can be used in a HubSpot form.",
+            "type": ["null", "boolean"]
+          },
+          "createdAt": {
+            "type": ["null", "string"]
+          },
+          "archivedAt": {
+            "description": "When the property was archived.",
+            "type": ["null", "string"]
+          },
+          "archived": {
+            "description": "Whether or not the property is archived.",
+            "type": ["null", "boolean"]
+          },
+          "groupName": {
+            "description": "The name of the property group the property belongs to.",
+            "type": ["null", "string"]
+          },
+          "referencedObjectType": {
+            "description": "If this property is related to other object(s), they'll be listed here.",
+            "type": ["null", "string"]
+          },
+          "name": {
+            "description": "The internal property name, which must be used when referencing the property via the API.",
+            "type": ["null", "string"]
+          },
+          "options": {
+            "type": ["null", "array"],
+            "items": {
+              "type": ["null", "object"],
+              "properties": {
+                "hidden": {
+                  "description": "Hidden options will not be displayed in HubSpot.",
+                  "type": ["null", "boolean"]
+                },
+                "displayOrder": {
+                  "description": "Options are displayed in order starting with the lowest positive integer value. Values of -1 will cause the option to be displayed after any positive values.",
+                  "type": ["null", "integer"]
+                },
+                "description": {
+                  "description": "A description of the option.",
+                  "type": ["null", "string"]
+                },
+                "label": {
+                  "description": "A human-readable option label that will be shown in HubSpot.",
+                  "type": ["null", "string"]
+                },
+                "value": {
+                  "description": "The internal value of the option, which must be used when setting the property value through the API.",
+                  "type": ["null", "string"]
+                }
+              }
+            }
+          },
+          "calculationFormula": {
+            "description": "Represents a formula that is used to compute a calculated property.",
+            "type": ["null", "string"]
+          },
+          "hasUniqueValue": {
+            "description": "Whether or not the property's value must be unique. Once set, this can't be changed.",
+            "type": ["null", "boolean"]
+          },
+          "fieldType": {
+            "description": "Controls how the property appears in HubSpot.",
+            "type": ["null", "string"]
+          },
+          "updatedUserId": {
+            "description": "The internal user ID of the user who updated the property in HubSpot. This field may not exist if the property was updated outside of HubSpot.",
+            "type": ["null", "string"]
+          },
+          "calculated": {
+            "description": "For default properties, true indicates that the property is calculated by a HubSpot process. It has no effect for custom properties.",
+            "type": ["null", "boolean"]
+          },
+          "externalOptions": {
+            "description": "For default properties, true indicates that the options are stored externally to the property settings.",
+            "type": ["null", "boolean"]
+          }
+        }
+      }
+    ,
+      "supported_sync_modes": ["full_refresh"],
+      "source_defined_primary_key": [["name"]],
+      "is_resumable": false
+    },
+    {
+      "name": "contact_properties",
+      "json_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": ["null", "object"],
+        "additionalProperties": true,
+        "properties": {
+          "createdUserId": {
+            "description": "The internal user ID of the user who created the property in HubSpot. This field may not exist if the property was created outside of HubSpot.",
+            "type": ["null", "string"]
+          },
+          "hidden": {
+            "description": "Whether or not the property will be hidden from the HubSpot UI. It's recommended this be set to false for custom properties.",
+            "type": ["null", "boolean"]
+          },
+          "modificationMetadata": {
+            "type": ["null", "object"],
+            "properties": {
+              "readOnlyOptions": {
+                "description": "Whether or not the property options are read-only.",
+                "type": ["null", "boolean"]
+              },
+              "readOnlyValue": {
+                "description": "Whether or not the property value is read-only.",
+                "type": ["null", "boolean"]
+              },
+              "readOnlyDefinition": {
+                "description": "Whether or not the property definition is read-only.",
+                "type": ["null", "boolean"]
+              },
+              "archivable": {
+                "description": "Whether or not the property can be archived.",
+                "type": ["null", "boolean"]
+              }
+            }
+          },
+          "displayOrder": {
+            "description": "Properties are shown in order, starting with the lowest positive integer value.",
+            "type": ["null", "integer"]
+          },
+          "description": {
+            "description": "A description of the property that will be shown as help text in HubSpot.",
+            "type": ["null", "string"]
+          },
+          "showCurrencySymbol": {
+            "description": "Whether or not the property will display the currency symbol set in the account settings.",
+            "type": ["null", "boolean"]
+          },
+          "label": {
+            "description": "A human-readable property label that will be shown in HubSpot.",
+            "type": ["null", "string"]
+          },
+          "type": {
+            "description": "The property data type.",
+            "type": ["null", "string"]
+          },
+          "hubspotDefined": {
+            "description": "This will be true for default object properties built into HubSpot.",
+            "type": ["null", "boolean"]
+          },
+          "formField": {
+            "description": "Whether or not the property can be used in a HubSpot form.",
+            "type": ["null", "boolean"]
+          },
+          "createdAt": {
+            "type": ["null", "string"]
+          },
+          "archivedAt": {
+            "description": "When the property was archived.",
+            "type": ["null", "string"]
+          },
+          "archived": {
+            "description": "Whether or not the property is archived.",
+            "type": ["null", "boolean"]
+          },
+          "groupName": {
+            "description": "The name of the property group the property belongs to.",
+            "type": ["null", "string"]
+          },
+          "referencedObjectType": {
+            "description": "If this property is related to other object(s), they'll be listed here.",
+            "type": ["null", "string"]
+          },
+          "name": {
+            "description": "The internal property name, which must be used when referencing the property via the API.",
+            "type": ["null", "string"]
+          },
+          "options": {
+            "type": ["null", "array"],
+            "items": {
+              "type": ["null", "object"],
+              "properties": {
+                "hidden": {
+                  "description": "Hidden options will not be displayed in HubSpot.",
+                  "type": ["null", "boolean"]
+                },
+                "displayOrder": {
+                  "description": "Options are displayed in order starting with the lowest positive integer value. Values of -1 will cause the option to be displayed after any positive values.",
+                  "type": ["null", "integer"]
+                },
+                "description": {
+                  "description": "A description of the option.",
+                  "type": ["null", "string"]
+                },
+                "label": {
+                  "description": "A human-readable option label that will be shown in HubSpot.",
+                  "type": ["null", "string"]
+                },
+                "value": {
+                  "description": "The internal value of the option, which must be used when setting the property value through the API.",
+                  "type": ["null", "string"]
+                }
+              }
+            }
+          },
+          "calculationFormula": {
+            "description": "Represents a formula that is used to compute a calculated property.",
+            "type": ["null", "string"]
+          },
+          "hasUniqueValue": {
+            "description": "Whether or not the property's value must be unique. Once set, this can't be changed.",
+            "type": ["null", "boolean"]
+          },
+          "fieldType": {
+            "description": "Controls how the property appears in HubSpot.",
+            "type": ["null", "string"]
+          },
+          "updatedUserId": {
+            "description": "The internal user ID of the user who updated the property in HubSpot. This field may not exist if the property was updated outside of HubSpot.",
+            "type": ["null", "string"]
+          },
+          "calculated": {
+            "description": "For default properties, true indicates that the property is calculated by a HubSpot process. It has no effect for custom properties.",
+            "type": ["null", "boolean"]
+          },
+          "externalOptions": {
+            "description": "For default properties, true indicates that the options are stored externally to the property settings.",
+            "type": ["null", "boolean"]
+          }
+        }
+      }
+    ,
+      "supported_sync_modes": ["full_refresh"],
+      "source_defined_primary_key": [["name"]],
+      "is_resumable": false
+    },
+    {
       "name": "engagements",
       "json_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",

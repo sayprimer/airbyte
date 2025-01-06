@@ -2344,6 +2344,21 @@ class EmailSubscriptions(Stream):
     scopes = {"content"}
     filter_old_records = False
 
+class ContactProperties(Stream):
+
+    url = "/crm/v3/properties/contact"
+    data_field = "results"
+    primary_key = "name"
+    scopes = {"crm.objects.contacts.read"}
+    filter_old_records = False
+
+class CompanyProperties(Stream):
+
+    url = "/crm/v3/properties/company"
+    data_field = "results"
+    primary_key = "name"
+    scopes = {"crm.objects.companies.read"}
+    filter_old_records = False
 
 class WebAnalyticsStream(CheckpointMixin, HttpSubStream, Stream):
     """
