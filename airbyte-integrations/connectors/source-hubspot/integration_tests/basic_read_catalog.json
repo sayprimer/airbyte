@@ -280,6 +280,15 @@
     },
     {
       "stream": {
+        "name": "contact_properties",
+        "json_schema": {},
+        "supported_sync_modes": ["full_refresh"]
+      },
+      "sync_mode": "full_refresh",
+      "destination_sync_mode": "overwrite"
+    },
+    {
+      "stream": {
         "name": "companies_property_history",
         "json_schema": {},
         "supported_sync_modes": ["full_refresh", "incremental"],
@@ -287,6 +296,15 @@
       },
       "sync_mode": "full_refresh",
       "cursor_field": ["timestamp"],
+      "destination_sync_mode": "overwrite"
+    },
+    {
+      "stream": {
+        "name": "company_properties",
+        "json_schema": {},
+        "supported_sync_modes": ["full_refresh"]
+      },
+      "sync_mode": "full_refresh",
       "destination_sync_mode": "overwrite"
     },
     {

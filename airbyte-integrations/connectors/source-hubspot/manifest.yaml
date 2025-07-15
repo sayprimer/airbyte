@@ -1556,6 +1556,58 @@ definitions:
             $ref: "#/schemas/companies"
         - $ref: "#/definitions/base_dynamic_schema_loader"
 
+  company_properties_stream:
+    $ref: "#/definitions/stream_base"
+    name: company_properties
+    primary_key:
+      - name
+    $parameters:
+      name: company_properties
+      required_scopes: crm.objects.companies.read
+    retriever:
+      $ref: "#/definitions/base_retriever"
+      requester:
+        $ref: "#/definitions/base_requester"
+        path: /crm/v3/properties/company
+      record_selector:
+        type: RecordSelector
+        extractor:
+          type: DpathExtractor
+          field_path:
+            - results
+      paginator:
+        $ref: "#/definitions/offset_paginator"
+    schema_loader:
+      type: InlineSchemaLoader
+      schema:
+        $ref: "#/schemas/company_properties"
+
+  contact_properties_stream:
+    $ref: "#/definitions/stream_base"
+    name: contact_properties
+    primary_key:
+      - name
+    $parameters:
+      name: contact_properties
+      required_scopes: crm.objects.contacts.read
+    retriever:
+      $ref: "#/definitions/base_retriever"
+      requester:
+        $ref: "#/definitions/base_requester"
+        path: /crm/v3/properties/contact
+      record_selector:
+        type: RecordSelector
+        extractor:
+          type: DpathExtractor
+          field_path:
+            - results
+      paginator:
+        $ref: "#/definitions/offset_paginator"
+    schema_loader:
+      type: InlineSchemaLoader
+      schema:
+        $ref: "#/schemas/contact_properties"
+
   engagements_calls_stream:
     type: StateDelegatingStream
     full_refresh_stream: "#/definitions/base_crm_search_full_refresh_stream"
@@ -1983,9 +2035,11 @@ streams:
   - "#/definitions/campaigns_stream"
   - "#/definitions/companies_stream"
   - "#/definitions/companies_property_history_stream"
+  - "#/definitions/company_properties_stream"
   - "#/definitions/contact_lists_stream"
   - "#/definitions/contacts_stream"
   - "#/definitions/contacts_property_history_stream"
+  - "#/definitions/contact_properties_stream"
   - "#/definitions/deal_pipelines_stream"
   - "#/definitions/deal_splits_stream"
   - "#/definitions/deals_archived_stream"
@@ -2377,6 +2431,274 @@ concurrency_level:
   max_concurrency: 40
 
 schemas:
+  company_properties:
+    $schema: http://json-schema.org/draft-07/schema#
+    type:
+      - "null"
+      - object
+    additionalProperties: true
+    properties:
+      name:
+        type:
+          - "null"
+          - string
+      label:
+        type:
+          - "null"
+          - string
+      description:
+        type:
+          - "null"
+          - string
+      groupName:
+        type:
+          - "null"
+          - string
+      type:
+        type:
+          - "null"
+          - string
+      fieldType:
+        type:
+          - "null"
+          - string
+      hidden:
+        type:
+          - "null"
+          - boolean
+      options:
+        type:
+          - "null"
+          - array
+        items:
+          type:
+            - "null"
+            - object
+      calculated:
+        type:
+          - "null"
+          - boolean
+      externalOptions:
+        type:
+          - "null"
+          - boolean
+      isCustomizedDefault:
+        type:
+          - "null"
+          - boolean
+      deleted:
+        type:
+          - "null"
+          - string
+      createdAt:
+        type:
+          - "null"
+          - string
+        format: date-time
+      updatedAt:
+        type:
+          - "null"
+          - string
+        format: date-time
+      displayOrder:
+        type:
+          - "null"
+          - integer
+      readOnlyValue:
+        type:
+          - "null"
+          - boolean
+      readOnlyDefinition:
+        type:
+          - "null"
+          - boolean
+      mutableDefinitionNotDeletable:
+        type:
+          - "null"
+          - boolean
+      favorited:
+        type:
+          - "null"
+          - boolean
+      favoritedOrder:
+        type:
+          - "null"
+          - integer
+      displayMode:
+        type:
+          - "null"
+          - string
+      showCurrencySymbol:
+        type:
+          - "null"
+          - boolean
+      createdUserId:
+        type:
+          - "null"
+          - string
+      textDisplayHint:
+        type:
+          - "null"
+          - string
+      numberDisplayHint:
+        type:
+          - "null"
+          - string
+      optionsAreMutable:
+        type:
+          - "null"
+          - boolean
+      referencedObjectType:
+        type:
+          - "null"
+          - string
+      formField:
+        type:
+          - "null"
+          - boolean
+      hubspotDefined:
+        type:
+          - "null"
+          - boolean
+      updatedUserId:
+        type:
+          - "null"
+          - string
+
+  contact_properties:
+    $schema: http://json-schema.org/draft-07/schema#
+    type:
+      - "null"
+      - object
+    additionalProperties: true
+    properties:
+      name:
+        type:
+          - "null"
+          - string
+      label:
+        type:
+          - "null"
+          - string
+      description:
+        type:
+          - "null"
+          - string
+      groupName:
+        type:
+          - "null"
+          - string
+      type:
+        type:
+          - "null"
+          - string
+      fieldType:
+        type:
+          - "null"
+          - string
+      hidden:
+        type:
+          - "null"
+          - boolean
+      options:
+        type:
+          - "null"
+          - array
+        items:
+          type:
+            - "null"
+            - object
+      calculated:
+        type:
+          - "null"
+          - boolean
+      externalOptions:
+        type:
+          - "null"
+          - boolean
+      isCustomizedDefault:
+        type:
+          - "null"
+          - boolean
+      deleted:
+        type:
+          - "null"
+          - string
+      createdAt:
+        type:
+          - "null"
+          - string
+        format: date-time
+      updatedAt:
+        type:
+          - "null"
+          - string
+        format: date-time
+      displayOrder:
+        type:
+          - "null"
+          - integer
+      readOnlyValue:
+        type:
+          - "null"
+          - boolean
+      readOnlyDefinition:
+        type:
+          - "null"
+          - boolean
+      mutableDefinitionNotDeletable:
+        type:
+          - "null"
+          - boolean
+      favorited:
+        type:
+          - "null"
+          - boolean
+      favoritedOrder:
+        type:
+          - "null"
+          - integer
+      displayMode:
+        type:
+          - "null"
+          - string
+      showCurrencySymbol:
+        type:
+          - "null"
+          - boolean
+      createdUserId:
+        type:
+          - "null"
+          - string
+      textDisplayHint:
+        type:
+          - "null"
+          - string
+      numberDisplayHint:
+        type:
+          - "null"
+          - string
+      optionsAreMutable:
+        type:
+          - "null"
+          - boolean
+      referencedObjectType:
+        type:
+          - "null"
+          - string
+      formField:
+        type:
+          - "null"
+          - boolean
+      hubspotDefined:
+        type:
+          - "null"
+          - boolean
+      updatedUserId:
+        type:
+          - "null"
+          - string
+
   contact_lists:
     $schema: http://json-schema.org/draft-07/schema#
     type:
