@@ -1675,8 +1675,6 @@ definitions:
           type: DpathExtractor
           field_path:
             - results
-      paginator:
-        $ref: "#/definitions/offset_paginator"
     schema_loader:
       type: InlineSchemaLoader
       schema:
@@ -1701,8 +1699,6 @@ definitions:
           type: DpathExtractor
           field_path:
             - results
-      paginator:
-        $ref: "#/definitions/offset_paginator"
     schema_loader:
       type: InlineSchemaLoader
       schema:
