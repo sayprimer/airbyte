@@ -11,7 +11,7 @@ import pytest
 from source_google_ads.google_ads import GoogleAds
 from source_google_ads.models import CustomerModel
 from source_google_ads.source import SourceGoogleAds
-from source_google_ads.streams import AdGroupLabel, Label, ServiceAccounts
+from source_google_ads.streams import ServiceAccounts
 
 from airbyte_cdk.utils import AirbyteTracedException
 
@@ -61,7 +61,7 @@ def test_expected_errors(mocker, config, exception, error_message):
         "source_google_ads.google_ads.GoogleAds.get_accessible_accounts",
         Mock(return_value=["123", "12345"]),
     )
-    source = SourceGoogleAds()
+    source = SourceGoogleAds(config, None, None)
     with pytest.raises(AirbyteTracedException) as exception:
         status_ok, error = source.check_connection(logging.getLogger("airbyte"), config)
     assert exception.value.message == error_message
@@ -69,11 +69,7 @@ def test_expected_errors(mocker, config, exception, error_message):
 
 @pytest.mark.parametrize(
     ("cls", "raise_expected"),
-    (
-        (AdGroupLabel, False),
-        (Label, False),
-        (ServiceAccounts, True),
-    ),
+    ((ServiceAccounts, True),),
 )
 def test_read_record_error_handling(mocker, config, customers, cls, raise_expected):
     mock_google_ads_request_failure(mocker, ["CUSTOMER_NOT_ENABLED"])
@@ -145,7 +141,7 @@ def test_check_custom_queries(mocker, config, custom_query, is_manager_account, 
         Mock(return_value=[CustomerModel(is_manager_account=is_manager_account, time_zone="Europe/Berlin", id="8765")]),
     )
     mocker.patch("source_google_ads.google_ads.GoogleAdsClient", return_value=MockGoogleAdsClient)
-    source = SourceGoogleAds()
+    source = SourceGoogleAds(config, None, None)
     logger_mock = Mock()
 
     # Use nullcontext or pytest.raises based on error_message

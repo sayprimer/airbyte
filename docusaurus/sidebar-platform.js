@@ -198,6 +198,7 @@ const deployAirbyte = {
         "deploying-airbyte/integrations/database",
         // "deploying-airbyte/integrations/monitoring",
         "deploying-airbyte/integrations/ingress",
+        "deploying-airbyte/integrations/ingress-1-7",
         "deploying-airbyte/integrations/custom-image-registries",
       ],
     },
@@ -209,15 +210,25 @@ const deployAirbyte = {
     },
     {
       type: "doc",
-      id: "deploying-airbyte/troubleshoot-deploy",
-    },
-    {
-      type: "doc",
       id: "deploying-airbyte/migrating-from-docker-compose",
     },
     {
       type: "doc",
       id: "deploying-airbyte/abctl-ec2",
+    },
+    {
+      type: "category",
+      label: "abctl",
+      link: {
+        type: "doc",
+        id: "deploying-airbyte/abctl/index",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "deploying-airbyte/troubleshoot-deploy",
+        },
+      ],
     },
   ],
 };
@@ -322,6 +333,10 @@ module.exports = {
         },
         sectionHeader("Using Airbyte"),
         connectionConfigurations,
+        {
+          type: "doc",
+          id: "using-airbyte/core-concepts/direct-load-tables",
+        },
         {
           type: "doc",
           id: "using-airbyte/core-concepts/typing-deduping",
@@ -442,7 +457,20 @@ module.exports = {
           type: "category",
           label: "Airbyte at Scale",
           items: [
-            "operator-guides/collecting-metrics",
+            {
+              type: "category",
+              label: "Collecting Metrics",
+              link: {
+                type: "doc",
+                id: "operator-guides/collecting-metrics",
+              },
+              items: [
+                {
+                  type: "doc",
+                  id: "operator-guides/open-telemetry",
+                },
+              ],
+            },
             "operator-guides/scaling-airbyte",
             "cloud/managing-airbyte-cloud/understand-airbyte-cloud-limits",
           ],

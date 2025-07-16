@@ -9,10 +9,17 @@ import pytest
 from google.ads.googleads.errors import GoogleAdsException
 from google.ads.googleads.v18.errors.types.errors import ErrorCode, GoogleAdsError, GoogleAdsFailure
 from google.ads.googleads.v18.errors.types.request_error import RequestErrorEnum
-from google.api_core.exceptions import DataLoss, InternalServerError, ResourceExhausted, TooManyRequests, Unauthenticated
+from google.api_core.exceptions import (
+    DataLoss,
+    InternalServerError,
+    ResourceExhausted,
+    ServiceUnavailable,
+    TooManyRequests,
+    Unauthenticated,
+)
 from grpc import RpcError
 from source_google_ads.google_ads import GoogleAds
-from source_google_ads.streams import AdGroup, ClickView, Customer, CustomerLabel
+from source_google_ads.streams import ClickView, ServiceAccounts
 
 from airbyte_cdk.models import FailureType, SyncMode
 from airbyte_cdk.utils import AirbyteTracedException
@@ -231,6 +238,39 @@ def test_retry_transient_errors(mocker, config, customers, error_cls):
     assert records == []
 
 
+def test_retry_503_raises_transient_error(mocker, config, customers):
+    customer_id = next(iter(customers)).id
+
+    mocker.patch("time.sleep")
+    credentials = config["credentials"]
+    credentials.update(use_proto_plus=True)
+    api = GoogleAds(credentials=credentials)
+    mocked_search = mocker.patch.object(
+        api.ga_services["default"], "search", side_effect=ServiceUnavailable("Service is currently unavailable")
+    )
+    incremental_stream_config = dict(
+        api=api,
+        conversion_window_days=config["conversion_window_days"],
+        start_date=config["start_date"],
+        end_date="2021-04-04",
+        customers=customers,
+    )
+    stream = ClickView(**incremental_stream_config)
+    stream_slice = {"customer_id": customer_id, "start_date": "2021-01-03", "end_date": "2021-01-04", "login_customer_id": "default"}
+    records = []
+
+    with pytest.raises(AirbyteTracedException) as exception:
+        records = list(stream.read_records(sync_mode=SyncMode.incremental, cursor_field=["segments.date"], stream_slice=stream_slice))
+
+    assert exception.value.internal_message == (
+        "Service is currently unavailable Unable to fetch data from Google Ads API due to "
+        "temporal error on the Google Ads server. Please retry again later. "
+    )
+    assert exception.value.failure_type == FailureType.transient_error
+    assert mocked_search.call_count == 5
+    assert records == []
+
+
 def test_retry_500_raises_transient_error(mocker, config, customers):
     customer_id = next(iter(customers)).id
 
@@ -262,47 +302,6 @@ def test_retry_500_raises_transient_error(mocker, config, customers):
     assert records == []
 
 
-def test_parse_response(mocker, customers, config):
-    """
-    Tests the `parse_response` method of the `Customer` class.
-    The test checks if the optimization_score_weight of type int is converted to float.
-    """
-
-    # Prepare sample input data
-    response = [
-        {"customer.id": "1", "segments.date": "2023-09-19", "customer.optimization_score_weight": 80},
-        {"customer.id": "2", "segments.date": "2023-09-20", "customer.optimization_score_weight": 80.0},
-        {"customer.id": "3", "segments.date": "2023-09-21"},
-    ]
-    mocker.patch("source_google_ads.streams.GoogleAdsStream.parse_response", Mock(return_value=response))
-
-    credentials = config["credentials"]
-    api = GoogleAds(credentials=credentials)
-
-    incremental_stream_config = dict(
-        api=api,
-        conversion_window_days=config["conversion_window_days"],
-        start_date=config["start_date"],
-        end_date="2021-04-04",
-        customers=customers,
-    )
-
-    # Create an instance of the Customer class
-    accounts = Customer(**incremental_stream_config)
-
-    # Use the parse_response method and get the output
-    output = list(accounts.parse_response(response))
-
-    # Expected output after the method's logic
-    expected_output = [
-        {"customer.id": "1", "segments.date": "2023-09-19", "customer.optimization_score_weight": 80.0},
-        {"customer.id": "2", "segments.date": "2023-09-20", "customer.optimization_score_weight": 80.0},
-        {"customer.id": "3", "segments.date": "2023-09-21"},
-    ]
-
-    assert output == expected_output
-
-
 def test_read_records_unauthenticated(mocker, customers, config):
     credentials = config["credentials"]
     api = GoogleAds(credentials=credentials)
@@ -313,21 +312,10 @@ def test_read_records_unauthenticated(mocker, customers, config):
         api=api,
         customers=customers,
     )
-    stream = CustomerLabel(**stream_config)
+    stream = ServiceAccounts(**stream_config)
     with pytest.raises(AirbyteTracedException) as exc_info:
         list(stream.read_records(SyncMode.full_refresh, {"customer_id": "customer_id", "login_customer_id": "default"}))
 
     assert exc_info.value.message == (
-        "Authentication failed for the customer 'customer_id'. " "Please try to Re-authenticate your credentials on set up Google Ads page."
+        "Authentication failed for the customer 'customer_id'. Please try to Re-authenticate your credentials on set up Google Ads page."
     )
-
-
-def test_ad_group_stream_query_removes_metrics_field_for_manager(customers_manager, customers, config):
-    credentials = config["credentials"]
-    api = GoogleAds(credentials=credentials)
-    stream_config = dict(api=api, customers=customers_manager, start_date="2020-01-01", conversion_window_days=10)
-    stream = AdGroup(**stream_config)
-    assert "metrics" not in stream.get_query(stream_slice={"customer_id": "123"})
-    stream_config = dict(api=api, customers=customers, start_date="2020-01-01", conversion_window_days=10)
-    stream = AdGroup(**stream_config)
-    assert "metrics" in stream.get_query(stream_slice={"customer_id": "123"})
