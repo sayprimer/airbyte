@@ -1557,15 +1557,15 @@ definitions:
         - $ref: "#/definitions/base_dynamic_schema_loader"
 
   company_properties_stream:
-    $ref: "#/definitions/stream_base"
-    name: company_properties
     primary_key:
       - name
     $parameters:
       name: company_properties
       required_scopes: crm.objects.companies.read
+    $ref: "#/definitions/stream_without_pagination"
+    name: company_properties
     retriever:
-      $ref: "#/definitions/base_retriever"
+      $ref: "#/definitions/retriever_without_pagination"
       requester:
         $ref: "#/definitions/base_requester"
         path: /crm/v3/properties/company
@@ -1581,15 +1581,15 @@ definitions:
         $ref: "#/schemas/company_properties"
 
   contact_properties_stream:
-    $ref: "#/definitions/stream_base"
-    name: contact_properties
     primary_key:
       - name
     $parameters:
       name: contact_properties
       required_scopes: crm.objects.contacts.read
+    $ref: "#/definitions/stream_without_pagination"
+    name: contact_properties
     retriever:
-      $ref: "#/definitions/base_retriever"
+      $ref: "#/definitions/retriever_without_pagination"
       requester:
         $ref: "#/definitions/base_requester"
         path: /crm/v3/properties/contact
