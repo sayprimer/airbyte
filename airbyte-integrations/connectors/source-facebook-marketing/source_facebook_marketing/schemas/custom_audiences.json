@@ -17,10 +17,6 @@
       "description": "An estimated upper bound count of the size of the custom audience.",
       "type": ["null", "integer"]
     },
-    "customer_file_source": {
-      "description": "The source of the customer file used to create the custom audience.",
-      "type": ["null", "string"]
-    },
     "data_source": {
       "description": "Information about the source of the custom audience.",
       "type": ["null", "object"],
@@ -112,54 +108,6 @@
       "description": "The name given to the custom audience.",
       "type": ["null", "string"]
     },
-    "operation_status": {
-      "description": "Status of ongoing operations related to the custom audience.",
-      "type": ["null", "object"],
-      "properties": {
-        "code": {
-          "description": "The code representing the operation status of the custom audience.",
-          "type": ["null", "integer"]
-        },
-        "description": {
-          "description": "Description of the operation status of the custom audience.",
-          "type": ["null", "string"]
-        }
-      }
-    },
-    "opt_out_link": {
-      "description": "The link for opting out of the custom audience.",
-      "type": ["null", "string"]
-    },
-    "page_deletion_marked_delete_time": {
-      "description": "The time when the page deletion was marked for deletion.",
-      "type": ["null", "integer"]
-    },
-    "permission_for_actions": {
-      "description": "Permissions granted for actions associated with the custom audience.",
-      "type": ["null", "object"],
-      "properties": {
-        "can_edit": {
-          "description": "Indicates if the user can edit the custom audience.",
-          "type": ["null", "boolean"]
-        },
-        "can_see_insight": {
-          "description": "Indicates if the user can see insights for the custom audience.",
-          "type": ["null", "string"]
-        },
-        "can_share": {
-          "description": "Indicates if the user can share the custom audience.",
-          "type": ["null", "string"]
-        },
-        "subtype_supports_lookalike": {
-          "description": "Indicates if the subtype supports lookalike audiences.",
-          "type": ["null", "string"]
-        },
-        "supports_recipient_lookalike": {
-          "description": "Indicates if recipient lookalike audiences are supported.",
-          "type": ["null", "string"]
-        }
-      }
-    },
     "pixel_id": {
       "description": "The ID of the pixel associated with the custom audience.",
       "type": ["null", "string"]
@@ -167,32 +115,6 @@
     "retention_days": {
       "description": "The number of days data for the custom audience will be retained.",
       "type": ["null", "integer"]
-    },
-    "rule": {
-      "description": "The rule or condition used to define the custom audience.",
-      "type": ["null", "string"]
-    },
-    "rule_aggregation": {
-      "description": "The aggregation method used for rules in the custom audience.",
-      "type": ["null", "string"]
-    },
-    "sharing_status": {
-      "description": "Status of sharing permissions for the custom audience.",
-      "type": ["null", "object"],
-      "properties": {
-        "code": {
-          "description": "The code representing the sharing status of the custom audience.",
-          "type": ["null", "integer"]
-        },
-        "description": {
-          "description": "Description of the sharing status of the custom audience.",
-          "type": ["null", "string"]
-        }
-      }
-    },
-    "subtype": {
-      "description": "The subtype of the custom audience.",
-      "type": ["null", "string"]
     },
     "time_content_updated": {
       "description": "The time when the content of the custom audience was last updated.",
