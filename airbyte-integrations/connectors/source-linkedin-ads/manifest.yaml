@@ -120,6 +120,56 @@ definitions:
         type: InlineSchemaLoader
         schema:
           $ref: "#/schemas/account_users"
+    dmp_segments:
+      type: DeclarativeStream
+      name: dmp_segments
+      primary_key:
+        - id
+      retriever:
+        type: SimpleRetriever
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: dmpSegments?account=urn%3Ali%3AsponsoredAccount%3A{{stream_slice.get('account_id')}}
+          http_method: GET
+          request_parameters:
+            q: account
+            count: "500"
+          request_headers:
+            Linkedin-Version: "202502"
+            X-Restli-Protocol-Version: 2.0.0
+          error_handlers:
+            type: CustomErrorHandler
+            class_name: source_declarative_manifest.components.LinkedInAdsErrorHandler
+            backoff_strategies:
+              - type: ExponentialBackoffStrategy
+                factor: 5
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: CustomRecordExtractor
+            class_name: source_declarative_manifest.components.LinkedInAdsRecordExtractor
+          schema_normalization: Default
+        paginator:
+          type: DefaultPaginator
+          page_token_option:
+            type: RequestOption
+            inject_into: request_parameter
+            field_name: start
+          pagination_strategy:
+            type: OffsetIncrement
+            page_size: 500
+        partition_router:
+          type: SubstreamPartitionRouter
+          parent_stream_configs:
+            - type: ParentStreamConfig
+              parent_key: id
+              partition_field: account_id
+              stream:
+                $ref: "#/definitions/streams/accounts"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/dmp_segments"
     campaigns:
       type: DeclarativeStream
       name: campaigns
@@ -1610,6 +1660,7 @@ definitions:
 streams:
   - $ref: "#/definitions/streams/accounts"
   - $ref: "#/definitions/streams/account_users"
+  - $ref: "#/definitions/streams/dmp_segments"
   - $ref: "#/definitions/streams/campaigns"
   - $ref: "#/definitions/streams/campaign_groups"
   - $ref: "#/definitions/streams/creatives"
@@ -1855,6 +1906,7 @@ metadata:
   autoImportSchema:
     accounts: false
     account_users: false
+    dmp_segments: false
     campaigns: false
     campaign_groups: false
     creatives: false
@@ -2007,6 +2059,87 @@ schemas:
           - string
       user:
         description: The user details including name, email, etc.
+        type:
+          - "null"
+          - string
+
+  dmp_segments:
+    $schema: http://json-schema.org/draft-07/schema#
+    type:
+      - "null"
+      - object
+    title: "DMP Segments"
+    additionalProperties: true
+    properties:
+      accessPolicy:
+        description: The default access policy of this DMP segment.
+        type:
+          - "null"
+          - string
+      account:
+        description: The sponsored account urn that this DMP segment belongs to.
+        type:
+          - "null"
+          - string
+      created:
+        description: The timestamp indicating when the DMP segment was created.
+        type:
+          - "null"
+          - string
+        format: date-time
+      id:
+        description: The id of this DMP segment.
+        type:
+          - "null"
+          - integer
+      destinations:
+        type:
+          - "null"
+          - array
+        description: The destinations and various metadata that the content of this segment will be onboarded to.
+        items:
+          type:
+            - "null"
+            - object
+          properties:
+            created:
+              description: The timestamp when the destination was created.
+              type:
+                - "null"
+                - integer
+            destinationSegmentId:
+              description: The destination segment identifier.
+              type:
+                - "null"
+                - string
+            lastModified:
+              description: The timestamp when the destination was last modified.
+              type:
+                - "null"
+                - integer
+            status:
+              description: The status of the destination.
+              type:
+                - "null"
+                - string
+      lastModified:
+        description: The date and time when the DMP segment was last modified.
+        type:
+          - "null"
+          - string
+        format: date-time
+      name:
+        description: The name of this DMP segment.
+        type:
+          - "null"
+          - string
+      sourcePlatform:
+        description: The source platform from where users profiles are being imported.
+        type:
+          - "null"
+          - string
+      type:
+        description: The content type of the profiles being imported into this DMP segment.
         type:
           - "null"
           - string
