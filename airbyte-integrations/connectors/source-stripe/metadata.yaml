@@ -6,11 +6,11 @@ data:
     hosts:
       - api.stripe.com
   connectorBuildOptions:
-    baseImage: docker.io/airbyte/python-connector-base:4.0.0@sha256:d9894b6895923b379f3006fa251147806919c62b7d9021b5cd125bb67d7bbe22
+    baseImage: docker.io/airbyte/source-declarative-manifest:7.5.1@sha256:8da9d362c184e2e46532ab94f6f9968a74835c0882d6a4a2f9f9c9e5b972f2a1
   connectorSubtype: api
   connectorType: source
   definitionId: e094cb9a-26de-4645-8761-65c0c425d1de
-  dockerImageTag: 5.14.1
+  dockerImageTag: 5.15.13
   dockerRepository: airbyte/source-stripe
   documentationUrl: https://docs.airbyte.com/integrations/sources/stripe
   erdUrl: https://dbdocs.io/airbyteio/source-stripe?view=relationships
@@ -21,7 +21,7 @@ data:
   name: Stripe
   remoteRegistries:
     pypi:
-      enabled: true
+      enabled: false
       packageName: airbyte-source-stripe
   registryOverrides:
     cloud:
@@ -54,8 +54,8 @@ data:
       - refunds
   supportLevel: certified
   tags:
-    - language:python
     - cdk:low-code
+    - language:manifest-only
   connectorTestSuitesOptions:
     - suite: liveTests
       testConnections:
@@ -83,4 +83,29 @@ data:
           secretStore:
             type: GSM
             alias: airbyte-connector-testing-secret-store
+  externalDocumentationUrls:
+    - title: Stripe API reference
+      url: https://stripe.com/docs/api
+      type: api_reference
+    - title: API changelog
+      url: https://docs.stripe.com/changelog
+      type: api_release_history
+    - title: API upgrades
+      url: https://docs.stripe.com/upgrades
+      type: api_release_history
+    - title: Stripe API changelog
+      url: https://stripe.com/docs/upgrades
+      type: api_release_history
+    - title: Stripe authentication
+      url: https://stripe.com/docs/api/authentication
+      type: authentication_guide
+    - title: Stripe API OpenAPI specification
+      url: https://github.com/stripe/openapi
+      type: openapi_spec
+    - title: Stripe rate limits
+      url: https://stripe.com/docs/rate-limits
+      type: rate_limits
+    - title: Stripe Status
+      url: https://status.stripe.com/
+      type: status_page
 metadataSpecVersion: "1.0"

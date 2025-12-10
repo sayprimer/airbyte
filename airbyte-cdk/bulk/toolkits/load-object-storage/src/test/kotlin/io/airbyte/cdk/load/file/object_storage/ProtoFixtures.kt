@@ -4,8 +4,9 @@
 
 package io.airbyte.cdk.load.file.object_storage
 
-import com.google.protobuf.kotlin.toByteString
+import io.airbyte.cdk.data.LeafAirbyteSchemaType
 import io.airbyte.cdk.load.command.DestinationStream
+import io.airbyte.cdk.load.command.computeUnknownColumnChanges
 import io.airbyte.cdk.load.data.AirbyteType
 import io.airbyte.cdk.load.data.AirbyteValueProxy
 import io.airbyte.cdk.load.data.ArrayType
@@ -24,6 +25,7 @@ import io.airbyte.cdk.load.data.UnionType
 import io.airbyte.cdk.load.data.UnknownType
 import io.airbyte.cdk.load.message.DestinationRecordProtobufSource
 import io.airbyte.cdk.load.message.DestinationRecordRaw
+import io.airbyte.cdk.protocol.AirbyteValueProtobufEncoder
 import io.airbyte.protocol.models.Jsons
 import io.airbyte.protocol.protobuf.AirbyteMessage
 import io.airbyte.protocol.protobuf.AirbyteRecordMessage
@@ -31,11 +33,16 @@ import io.airbyte.protocol.protobuf.AirbyteRecordMessageMetaOuterClass
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.unmockkAll
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.OffsetDateTime
+import java.time.OffsetTime
 import java.util.UUID
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
-abstract class ProtoFixtures {
+abstract class ProtoFixtures(private val addUnknownTypeToSchema: Boolean) {
 
     val uuid: UUID = UUID.fromString("11111111-1111-1111-1111-111111111111")
     val emittedAtMs = 1_724_438_400_000L
@@ -49,8 +56,8 @@ abstract class ProtoFixtures {
 
     @BeforeEach
     fun setUp() {
-        fieldAccessors =
-            arrayOf(
+        val fields =
+            mutableListOf(
                 field("bool_col", BooleanType, 0),
                 field("int_col", IntegerType, 1),
                 field("num_col", NumberType, 2),
@@ -62,44 +69,64 @@ abstract class ProtoFixtures {
                 field("ts_no_tz_col", TimestampTypeWithoutTimezone, 8),
                 field("array_col", ArrayType(FieldType(StringType, false)), 9),
                 field("obj_col", ObjectType(linkedMapOf("k" to FieldType(StringType, false))), 10),
-                field("union_col", UnionType(setOf(StringType), false), 11),
-                field("unknown_col", UnknownType(Jsons.emptyObject()), 12),
+                field(
+                    "union_col",
+                    UnionType.of(
+                        ObjectType(
+                            linkedMapOf(
+                                "u" to FieldType(IntegerType, nullable = false),
+                            ),
+                        ),
+                    ),
+                    11,
+                ),
+            )
+        if (addUnknownTypeToSchema) {
+            fields.add(
+                field(
+                    "unknown_col",
+                    UnknownType(Jsons.emptyObject()),
+                    12,
+                ),
+            )
+        }
+
+        fieldAccessors = fields.toTypedArray()
+
+        val encoder = AirbyteValueProtobufEncoder()
+        val protoValues =
+            mutableListOf(
+                encoder.encode(true, LeafAirbyteSchemaType.BOOLEAN),
+                encoder.encode(123L, LeafAirbyteSchemaType.INTEGER),
+                encoder.encode(12.34, LeafAirbyteSchemaType.NUMBER),
+                encoder.encode("hello", LeafAirbyteSchemaType.STRING),
+                encoder.encode(LocalDate.parse("2025-06-17"), LeafAirbyteSchemaType.DATE),
+                encoder.encode(
+                    OffsetTime.parse("23:59:59+02:00"),
+                    LeafAirbyteSchemaType.TIME_WITH_TIMEZONE
+                ),
+                encoder.encode(
+                    LocalTime.parse("23:59:59"),
+                    LeafAirbyteSchemaType.TIME_WITHOUT_TIMEZONE
+                ),
+                encoder.encode(
+                    OffsetDateTime.parse("2025-06-17T23:59:59+02:00"),
+                    LeafAirbyteSchemaType.TIMESTAMP_WITH_TIMEZONE
+                ),
+                encoder.encode(
+                    LocalDateTime.parse("2025-06-17T23:59:59"),
+                    LeafAirbyteSchemaType.TIMESTAMP_WITHOUT_TIMEZONE
+                ),
+                encoder.encode("""["a","b"]""".toByteArray(), LeafAirbyteSchemaType.JSONB),
+                encoder.encode("""{"k":"v"}""".toByteArray(), LeafAirbyteSchemaType.JSONB),
+                encoder.encode("""{"u":1}""".toByteArray(), LeafAirbyteSchemaType.JSONB),
             )
 
-        val protoValues =
-            listOf(
-                AirbyteRecordMessage.AirbyteValueProtobuf.newBuilder().setBoolean(true).build(),
-                AirbyteRecordMessage.AirbyteValueProtobuf.newBuilder().setInteger(123).build(),
-                AirbyteRecordMessage.AirbyteValueProtobuf.newBuilder().setNumber(12.34).build(),
-                AirbyteRecordMessage.AirbyteValueProtobuf.newBuilder().setString("hello").build(),
-                AirbyteRecordMessage.AirbyteValueProtobuf.newBuilder()
-                    .setDate("2025-06-17")
-                    .build(),
-                AirbyteRecordMessage.AirbyteValueProtobuf.newBuilder()
-                    .setTimeWithTimezone("23:59:59+02")
-                    .build(),
-                AirbyteRecordMessage.AirbyteValueProtobuf.newBuilder()
-                    .setTimeWithoutTimezone("23:59:59")
-                    .build(),
-                AirbyteRecordMessage.AirbyteValueProtobuf.newBuilder()
-                    .setTimestampWithTimezone("2025-06-17T23:59:59+02")
-                    .build(),
-                AirbyteRecordMessage.AirbyteValueProtobuf.newBuilder()
-                    .setTimestampWithoutTimezone("2025-06-17T23:59:59")
-                    .build(),
-                AirbyteRecordMessage.AirbyteValueProtobuf.newBuilder()
-                    .setJson("""["a","b"]""".toByteArray().toByteString())
-                    .build(),
-                AirbyteRecordMessage.AirbyteValueProtobuf.newBuilder()
-                    .setJson("""{"k":"v"}""".toByteArray().toByteString())
-                    .build(),
-                AirbyteRecordMessage.AirbyteValueProtobuf.newBuilder()
-                    .setJson("""{"u":1}""".toByteArray().toByteString())
-                    .build(),
-                AirbyteRecordMessage.AirbyteValueProtobuf.newBuilder()
-                    .setIsNull(true)
-                    .build(), // unknown_col
+        if (addUnknownTypeToSchema) {
+            protoValues.add(
+                encoder.encode(null, LeafAirbyteSchemaType.STRING),
             )
+        }
 
         val metaProto =
             AirbyteRecordMessageMetaOuterClass.AirbyteRecordMessageMeta.newBuilder()
@@ -142,7 +169,7 @@ abstract class ProtoFixtures {
             AirbyteRecordMessage.AirbyteRecordMessageProtobuf.newBuilder()
                 .setStreamName("dummy")
                 .setEmittedAtMs(emittedAtMs)
-                .addAllData(protoValues)
+                .addAllData(protoValues.map { it.build() })
                 .setMeta(metaProto)
                 .build()
 
@@ -169,16 +196,32 @@ abstract class ProtoFixtures {
                             ObjectType(linkedMapOf("k" to FieldType(StringType, false))),
                             false,
                         ),
-                    "union_col" to FieldType(UnionType(setOf(StringType), false), false),
-                    "unknown_col" to FieldType(UnknownType(Jsons.emptyObject()), false),
+                    "union_col" to
+                        FieldType(
+                            UnionType.of(
+                                ObjectType(
+                                    linkedMapOf(
+                                        "u" to FieldType(IntegerType, nullable = false),
+                                    ),
+                                ),
+                            ),
+                            false,
+                        ),
                 ),
             )
+
+        if (addUnknownTypeToSchema) {
+            dummyType.properties["unknown_col"] = FieldType(UnknownType(Jsons.emptyObject()), false)
+        }
 
         stream = mockk {
             every { this@mockk.airbyteValueProxyFieldAccessors } returns fieldAccessors
             every { this@mockk.syncId } returns this@ProtoFixtures.syncId
             every { this@mockk.generationId } returns this@ProtoFixtures.generationId
             every { this@mockk.schema } returns dummyType
+            every { this@mockk.mappedDescriptor } returns DestinationStream.Descriptor("", "dummy")
+            every { this@mockk.unknownColumnChanges } returns
+                dummyType.computeUnknownColumnChanges()
         }
 
         record =
