@@ -135,7 +135,7 @@ definitions:
             q: account
             count: "500"
           request_headers:
-            Linkedin-Version: "202502"
+            Linkedin-Version: "202601"
             X-Restli-Protocol-Version: 2.0.0
           error_handlers:
             type: CustomErrorHandler
